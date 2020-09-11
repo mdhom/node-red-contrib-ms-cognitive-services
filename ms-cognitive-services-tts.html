@@ -1,0 +1,172 @@
+<!--- CONFIG NODE --->
+<script type="text/javascript">
+    RED.nodes.registerType('ms-cognitive-services-config',{
+        category: 'config',
+        defaults: {
+			name:   {value:"", required: true},
+            apiKey: {value:"", required: true},
+			region: {value:"westeurope", required: true}
+        },
+        label: function() {
+            return this.name;
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="ms-cognitive-services-config">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Name" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-apiKey"><i class="fa fa-tag"></i> ApiKey</label>
+        <input type="password" id="node-config-input-apiKey" placeholder="ApiKey" />
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-region"><i class="fa fa-tag"></i> Region</label>
+        <input type="text" id="node-config-input-region" placeholder="Region" />
+    </div>
+</script>
+
+<script type="text/html" data-help-name="ms-cognitive-services-config">
+    <p>Stores config data for ms-cognitive-services</p>
+</script>
+
+
+<!--- TEXT TO SPEECH NODE --->
+<script type="text/javascript">
+    RED.nodes.registerType('ms-cognitive-services-tts',{
+        category: 'Microsoft Cognitive Services',
+        color: '#a6bbcf',
+        defaults: {
+            name: 		{value:""},
+			apiConfig: 	{value:"", type:"ms-cognitive-services-config"},
+			voice: 		{value:"de-DE-KatjaNeural"},
+			text: 		{value:"Text to synthesize"},
+        },
+        inputs:1,
+        outputs:1,
+        icon: "icons/podcast.png",
+        label: function() {
+            return this.name||"Text to speech";
+        },
+		paletteLabel: "Text to speech",
+		oneditprepare: function() {
+			$('#voiceSelectButton').click(function () {
+				if ($('#voiceSelect').length === 0){	
+					fetchBearerToken(function(bearerToken){
+						var selectedVoice = $('#node-input-voice').val();
+						fetchVoicesList(bearerToken, function(availableVoices){
+							// response is array of objects. Object structure:
+							// {
+							//		"Name": "Microsoft Server Speech Text to Speech Voice (ar-EG, Hoda)",
+							//		"DisplayName": "Hoda",
+							//		"LocalName": "هدى",
+							//		"ShortName": "ar-EG-Hoda",
+							//		"Gender": "Female",
+							//		"Locale": "ar-EG",
+							//		"SampleRateHertz": "16000",
+							//		"VoiceType": "Standard"
+							//	}
+							
+							// generate select
+							$('#voiceSelectRow').append("<select id=\"voiceSelect\" size=\"9\" style=\"width:100%; position:absolute; top:45px; margin: 0 0 40px 0;\"></select>");
+							availableVoices.forEach(function(voice){
+								if (voice.ShortName === selectedVoice) {
+									$('#voiceSelect').append('<option selected="selected">'+voice.ShortName+'</option>');
+								} else {
+									$('#voiceSelect').append('<option>'+voice.ShortName+'</option>');
+								}
+							});
+							
+							// append changed-callback
+							$('#voiceSelect').change(function(){
+								var option = $(this).val();
+								$('#node-input-voice').val(option);
+								$('#voiceSelect').remove();
+							});
+						});
+					});
+				} else {
+					$('#voiceSelect').remove();
+				}
+			});
+		}
+    });
+	
+	function fetchBearerToken(callback){
+		var config = RED.nodes.node($("#node-input-apiConfig").val()); 
+		if (config === undefined || config === null){
+			alert("No config selected!");
+			return;
+		}
+		
+		var settings = {
+		  "url": "https://" + config.region + ".api.cognitive.microsoft.com/sts/v1.0/issueToken",
+		  "method": "POST",
+		  "timeout": 0,
+		  "headers": {
+			"Ocp-Apim-Subscription-Key": config.apiKey,
+			"Host": config.region + ".api.cognitive.microsoft.com"
+		  },
+		};
+
+		$.ajax(settings).done(function (response) {
+			callback(response);
+		});
+	}
+	
+	function fetchVoicesList(bearerToken, callback){
+		var config = RED.nodes.node($("#node-input-apiConfig").val()); 
+		if (config === undefined || config === null){
+			alert("No config selected!");
+			return;
+		}
+		
+		var settings = {
+		  "url": "https://" + config.region + ".tts.speech.microsoft.com/cognitiveservices/voices/list",
+		  "method": "GET",
+		  "timeout": 0,
+		  "headers": {
+			"Authorization": "Bearer " + bearerToken,
+			"Host": config.region + ".tts.speech.microsoft.com"
+		  },
+		};
+
+		$.ajax(settings).done(function (response) {
+			callback(response);
+		});
+	}
+</script>
+
+<script type="text/html" data-template-name="ms-cognitive-services-tts">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-apiConfig"><i class="fa fa-tag"></i> ApiConfig</label>
+        <input type="text" id="node-input-apiConfig" placeholder="ApiConfig" />
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-text"><i class="fa fa-tag"></i> Text</label>
+        <input type="text" id="node-input-text" placeholder="Text" />
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-voice"><i class="fa fa-tag"></i> Voice</label>
+		<div style="display: inline-block; position: relative; width: 70%; height: 20px;" id="voiceSelectRow">
+			<div style="position: absolute; left: 0px; right: 40px;">
+				<input type="text" id="node-input-voice" placeholder="Voice" style="width:100%" />
+			</div>
+			<button class="red-ui-button" id="voiceSelectButton" style="position: absolute; right: 0px; top: 0px;"><i class="fa fa-search"></i></button>
+		</div>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="ms-cognitive-services-tts">
+    <p>A simple node that converts the message payloads into all mcs-tts characters</p>
+</script>
