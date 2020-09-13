@@ -51,11 +51,15 @@ module.exports = function(RED) {
 				const filename = md5(ssml) + ".wav";
 				const filepath = "/data/myModules/node-red-contrib-ms-cognitive-services/audioFiles/" + filename;
 								
-				if (fs.existsSync(filepath)){
-					msg.audioFile = filename;
-					msg.audioResult = "Skipped";
-					node.send(msg);
-					node.status({fill:"green",shape:"dot",text:"Successfull | Skipped"});
+				if (fs.existsSync(filepath)){	
+					fs.readFile(filepath, function(err, data) {
+						if (err) throw err;
+						
+						msg.payload = data;
+						msg.tempFilename = filename;
+						node.send(msg);
+						node.status({fill:"green",shape:"dot",text:"Successfull | Skipped"});
+					});
 					return;
 				}
 				
@@ -69,18 +73,18 @@ module.exports = function(RED) {
 				synthesizer.speakSsmlAsync(
 					ssml,
 					result => {
-						node.status({fill:"green",shape:"dot",text:"Successfull | Downloaded"});
 						if (result) {
-							if (result.privErrorDetails !== undefined)
-							{
+							if (result.privErrorDetails !== undefined) {
 								handleError(result.privErrorDetails);
-							}
-							else
-							{					
-								msg.payload = result;
-								msg.audioFile = filename;
-								msg.audioResult = "Downloaded";
-								node.send(msg);
+							} else {		
+								fs.readFile(filepath, function(err, data) {
+									if (err) throw err;
+									
+									msg.payload = data;
+									msg.tempFilename = filename;
+									node.send(msg);
+									node.status({fill:"green",shape:"dot",text:"Successfull | Downloaded"});
+								});
 							}
 						} else {
 							handleError("No result received");
