@@ -51,7 +51,7 @@ module.exports = function(RED) {
 				const filename = md5(ssml) + ".wav";
 				const filepath = "/data/myModules/node-red-contrib-ms-cognitive-services/audioFiles/" + filename;
 								
-				if (fs.existsSync(filepath)){	
+				if (config.storeAndReuse && fs.existsSync(filepath)){	
 					fs.readFile(filepath, function(err, data) {
 						if (err) throw err;
 						

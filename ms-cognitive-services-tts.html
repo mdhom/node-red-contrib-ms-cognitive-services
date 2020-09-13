@@ -40,10 +40,11 @@
         category: 'Microsoft Cognitive Services',
         color: '#a6bbcf',
         defaults: {
-            name: 		{value:""},
-			apiConfig: 	{value:"", type:"ms-cognitive-services-config"},
-			voice: 		{value:"de-DE-KatjaNeural"},
-			text: 		{value:"Text to synthesize"},
+            name: 			{value:""},
+			apiConfig: 		{value:"", type:"ms-cognitive-services-config"},
+			voice: 			{value:"de-DE-KatjaNeural"},
+			text: 			{value:"Text to synthesize"},
+			storeAndReuse: 	{value:true}
         },
         inputs:1,
         outputs:1,
@@ -164,6 +165,11 @@
 			</div>
 			<button class="red-ui-button" id="voiceSelectButton" style="position: absolute; right: 0px; top: 0px;"><i class="fa fa-search"></i></button>
 		</div>
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-storeAndReuse"><i class="fa fa-tag"></i> Store and reuse audiofile</label>
+        <input type="checkbox" id="node-input-storeAndReuse" placeholder="Store and reuse audiofile" />
     </div>
 </script>
 
