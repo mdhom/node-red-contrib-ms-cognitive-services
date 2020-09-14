@@ -26,12 +26,12 @@ module.exports = function(RED) {
 		
         node.on('input', function(msg) {
 			try{
-				var textToSynthesize = config.text;
-				var voice = config.voice;
-				var expression = config.expression;
-				var rate = config.rate;
-				var pitch = config.pitch;
-				var storeAndReuse = config.storeAndReuse;
+				var textToSynthesize 	= config.text;
+				var voice 				= config.voice;
+				var expression 			= config.expression;
+				var rate 				= config.rate;
+				var pitch 				= config.pitch;
+				var storeAndReuse 		= config.storeAndReuse;
 				
 				if (msg.payload !== undefined && msg.payload !== null)
 				{
