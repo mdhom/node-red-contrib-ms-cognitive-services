@@ -28,30 +28,47 @@ module.exports = function(RED) {
 			try{
 				var textToSynthesize = config.text;
 				var voice = config.voice;
+				var expression = config.expression;
+				var rate = config.rate;
+				var pitch = config.pitch;
+				var storeAndReuse = config.storeAndReuse;
 				
 				if (msg.payload !== undefined && msg.payload !== null)
 				{
-					if (msg.payload.text !== undefined) {
-						textToSynthesize = msg.payload.text;
-					}
-					
-					if (msg.payload.voice !== undefined) {
-						voice = msg.payload.voice;
-					}
+					if (msg.payload.text !== undefined) { textToSynthesize = msg.payload.text; }
+					if (msg.payload.voice !== undefined) { voice = msg.payload.voice; }
+					if (msg.payload.expression !== undefined) { expression = msg.payload.expression; }
+					if (msg.payload.rate !== undefined) { rate = msg.payload.rate; }
+					if (msg.payload.pitch !== undefined) { pitch = msg.payload.pitch; }
+					if (msg.payload.storeAndReuse !== undefined) { storeAndReuse = msg.payload.storeAndReuse; }
 				}
-				
-				const ssml = '<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US">' +
-							 '  <voice name="'+ voice+'">' +
-							 '    <mstts:express-as style="General">' + 
-							 '      <prosody rate="0%" pitch="0%">' + textToSynthesize + '</prosody>' +
-							 '    </mstts:express-as>' +
-							 '  </voice>' + 
-							 '</speak>';
+
+				var ssml = '';
+				if (expression == 'Chat') {
+					ssml = '<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US">' +
+					'  <voice name="'+ voice+'">' +
+					'    <prosody rate="' + rate + '%" pitch="' + pitch + '%">' + textToSynthesize + '</prosody>' +
+					'  </voice>' + 
+					'</speak>';
+				} else {
+					ssml = '<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US">' +
+					'  <voice name="'+ voice+'">' +
+					'    <mstts:express-as style="' + expression + '">' + 
+					'      <prosody rate="' + rate + '%" pitch="' + pitch + '%">' + textToSynthesize + '</prosody>' +
+					'    </mstts:express-as>' +
+					'  </voice>' + 
+					'</speak>';
+				}
 							 
 				const filename = md5(ssml) + ".wav";
-				const filepath = "/data/myModules/node-red-contrib-ms-cognitive-services/audioFiles/" + filename;
+				const fileDirectory = "/data/ms-cognitive-services-audiofiles/";
+				const filepath = fileDirectory + filename;
+
+				if (!fs.existsSync(fileDirectory)){
+					fs.mkdirSync(fileDirectory);
+				}
 								
-				if (config.storeAndReuse && fs.existsSync(filepath)){	
+				if (storeAndReuse && fs.existsSync(filepath)){	
 					fs.readFile(filepath, function(err, data) {
 						if (err) throw err;
 						
@@ -65,7 +82,6 @@ module.exports = function(RED) {
 				
 				const speechConfig = sdk.SpeechConfig.fromSubscription(configNode.apiKey, configNode.region);
 				const audioConfig = sdk.AudioConfig.fromAudioFileOutput(filepath);
-
 				const synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
 							 
 				node.status({fill:"yellow",shape:"dot",text:"Requesting"});

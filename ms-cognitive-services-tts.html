@@ -3,13 +3,11 @@
     RED.nodes.registerType('ms-cognitive-services-config',{
         category: 'config',
         defaults: {
-			name:   {value:"", required: true},
-            apiKey: {value:"", required: true},
-			region: {value:"westeurope", required: true}
+			name:   { value: "", 			required: true },
+            apiKey: { value: "", 			required: true },
+			region: { value: "westeurope", 	required: true }
         },
-        label: function() {
-            return this.name;
-        }
+        label: function() { return this.name; }
     });
 </script>
 
@@ -36,24 +34,67 @@
 
 <!--- TEXT TO SPEECH NODE --->
 <script type="text/javascript">
+	const pitchMin =  -50;
+	const pitchMax =   50;
+	const rateMin  = -100;
+	const rateMax  =  200;
+
+	function isInRange(value, min, max) {
+		return value <= max && value >= min;
+	}
+
     RED.nodes.registerType('ms-cognitive-services-tts',{
         category: 'Microsoft Cognitive Services',
         color: '#a6bbcf',
         defaults: {
-            name: 			{value:""},
-			apiConfig: 		{value:"", type:"ms-cognitive-services-config"},
-			voice: 			{value:"de-DE-KatjaNeural"},
-			text: 			{value:"Text to synthesize"},
-			storeAndReuse: 	{value:true}
+            name: 			{ value: "" },
+			apiConfig: 		{ value: "", type: "ms-cognitive-services-config" },
+			voice: 			{ value: "de-DE-KatjaNeural" },
+			expression:		{ value: "General" },
+			rate:			{ value: 0, validate: function(v) { return isInRange(v, rateMin, rateMax); }},
+			pitch:			{ value: 0, validate: function(v) { return isInRange(v, pitchMin, pitchMax); }},
+			text: 			{ value: "Text to synthesize" },
+			storeAndReuse: 	{ value: true }
         },
-        inputs:1,
-        outputs:1,
+        inputs: 1,
+        outputs: 1,
         icon: "icons/podcast.png",
-        label: function() {
-            return this.name||"Text to speech";
-        },
+        label: function() { return this.name || "Text to speech"; },
 		paletteLabel: "Text to speech",
 		oneditprepare: function() {
+
+			$("#node-input-rate").typedInput({
+				type:"num",
+				types:["num"],
+				typeField: "#node-input-rate-type"
+			});
+
+			$("#node-input-pitch").typedInput({
+				type:"num",
+				types:["num"],
+				typeField: "#node-input-pitch-type"
+			});
+
+			$("#node-input-pitch").change(function(){
+				var valid = isInRange($(this).val(), pitchMin, pitchMax);
+				var targetElement = $(this).parent().find('.red-ui-typedInput-container');
+				if (!valid) {
+					targetElement.addClass('input-error');
+				} else {
+					targetElement.removeClass('input-error');
+				}
+			});
+
+			$("#node-input-rate").change(function(){
+				var valid = isInRange($(this).val(), rateMin, rateMax);
+				var targetElement = $(this).parent().find('.red-ui-typedInput-container');
+				if (!valid) {
+					targetElement.addClass('input-error');
+				} else {
+					targetElement.removeClass('input-error');
+				}
+			});
+
 			$('#voiceSelectButton').click(function () {
 				if ($('#voiceSelect').length === 0){	
 					fetchBearerToken(function(bearerToken){
@@ -72,7 +113,7 @@
 							//	}
 							
 							// generate select
-							$('#voiceSelectRow').append("<select id=\"voiceSelect\" size=\"9\" style=\"width:100%; position:absolute; top:45px; margin: 0 0 40px 0;\"></select>");
+							$('#voiceSelectRow').append("<select id=\"voiceSelect\" size=\"9\" style=\"width:100%; position:absolute; top:45px; margin: 0 0 40px 0; z-index:9999;\"></select>");
 							availableVoices.forEach(function(voice){
 								if (voice.ShortName === selectedVoice) {
 									$('#voiceSelect').append('<option selected="selected">'+voice.ShortName+'</option>');
@@ -165,6 +206,30 @@
 			</div>
 			<button class="red-ui-button" id="voiceSelectButton" style="position: absolute; right: 0px; top: 0px;"><i class="fa fa-search"></i></button>
 		</div>
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-expression"><i class="fa fa-tag"></i> Expression</label>
+        <select id="node-input-expression" placeholder="Expression">
+			<option>General</option>
+			<option>Cheerful</option>
+			<option>CustomerService</option>
+			<option>Empathy</option>
+			<option>Newscast</option>
+			<option>Chat</option>
+		</select>
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-rate"><i class="fa fa-tag"></i> Rate (%)</label>
+		<input type="text" id="node-input-rate">
+		<input type="hidden" id="node-input-rate-type">
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-pitch"><i class="fa fa-tag"></i> Pitch (%)</label>
+		<input type="text" id="node-input-pitch">
+		<input type="hidden" id="node-input-pitch-type">
     </div>
 	
     <div class="form-row">
