@@ -7,7 +7,7 @@
   },
   "node-red" : {
     "nodes": {
-	  "ms-cognitive-services-tts": "ms-cognitive-services-tts.js"
+	  "ms-cognitive-services-tts": "text-to-speech/text-to-speech.js"
 	}
   },
   "author": "Max Dhom",
