@@ -4,10 +4,13 @@
         category: 'config',
         defaults: {
 			name:   { value: "", 			required: true },
-            apiKey: { value: "", 			required: true },
 			region: { value: "westeurope", 	required: true }
-        },
-        label: function() { return this.name; }
+		},
+		credentials: {
+			apiKey: {type:"text"}
+		},
+        label: function() { return this.name; },
+		paletteLabel: "MS cognitive services config"
     });
 </script>
 
@@ -19,7 +22,7 @@
     <div class="form-row">
         <label for="node-input-apiKey"><i class="fa fa-tag"></i> ApiKey</label>
         <input type="password" id="node-config-input-apiKey" placeholder="ApiKey" />
-    </div>
+	</div>
 	
     <div class="form-row">
         <label for="node-input-region"><i class="fa fa-tag"></i> Region</label>
@@ -28,7 +31,11 @@
 </script>
 
 <script type="text/html" data-help-name="ms-cognitive-services-config">
-    <p>Stores config data for ms-cognitive-services</p>
+    <p>
+		Stores config data for ms-cognitive-services. You can find your ApiKey in the resource within your 
+		<a href="https://portal.azure.com" title="Azure Portal" target="_blank">Azure Portal</a>. Browse to your resource
+		and open "Resource Management > Keys and Endpoint".
+	</p>
 </script>
 
 
@@ -58,7 +65,7 @@
         },
         inputs: 1,
         outputs: 1,
-        icon: "icons/podcast.png",
+        icon: ".icons/text-to-speech-icon.png",
         label: function() { return this.name || "Text to speech"; },
 		paletteLabel: "Text to speech",
 		oneditprepare: function() {
@@ -284,7 +291,7 @@
 		<dt>tempFilename <span class="property-type">string</span></dt>
 		<dd> The name of the temporary file, where the audio is stored in data folder. </dd>
 	</dl>
-	
+
 	<h3>References</h3>
 	<ul>
 		<li><a href="https://github.com/mdhom/node-red-contrib-ms-cognitive-services" target=_blank>GitHub</a> - the nodes github repository</li>

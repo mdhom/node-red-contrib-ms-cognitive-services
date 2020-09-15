@@ -2,10 +2,13 @@ module.exports = function(RED) {
     function MCSConfigNode(config) {
         RED.nodes.createNode(this,config);
         this.name   = config.name;
-        this.apiKey = config.apiKey;
         this.region = config.region;
     }
-    RED.nodes.registerType("ms-cognitive-services-config",MCSConfigNode);
+    RED.nodes.registerType("ms-cognitive-services-config",MCSConfigNode, {
+		credentials: {
+			apiKey: { type:"text" }
+		}
+	});
 	
     function MCSTextToSpeechNode(config) {
 		"use strict";
@@ -80,7 +83,7 @@ module.exports = function(RED) {
 					return;
 				}
 				
-				const speechConfig = sdk.SpeechConfig.fromSubscription(configNode.apiKey, configNode.region);
+				const speechConfig = sdk.SpeechConfig.fromSubscription(configNode.credentials.apiKey, configNode.region);
 				const audioConfig  = sdk.AudioConfig.fromAudioFileOutput(filepath);
 				const synthesizer  = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
 							 
