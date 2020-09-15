@@ -9,9 +9,9 @@ module.exports = function(RED) {
 	
     function MCSTextToSpeechNode(config) {
 		"use strict";
-        RED.nodes.createNode(this,config);
-        var configNode = RED.nodes.getNode(config.apiConfig);
+		RED.nodes.createNode(this,config);
 		
+        var configNode = RED.nodes.getNode(config.apiConfig);
         var node = this;
 		
 		// pull in the required packages.
@@ -33,14 +33,14 @@ module.exports = function(RED) {
 				var pitch 				= config.pitch;
 				var storeAndReuse 		= config.storeAndReuse;
 				
-				if (msg.payload !== undefined && msg.payload !== null)
+				if (msg.payload !== undefined && msg.payload !== null) 
 				{
-					if (msg.payload.text !== undefined) { textToSynthesize = msg.payload.text; }
-					if (msg.payload.voice !== undefined) { voice = msg.payload.voice; }
-					if (msg.payload.expression !== undefined) { expression = msg.payload.expression; }
-					if (msg.payload.rate !== undefined) { rate = msg.payload.rate; }
-					if (msg.payload.pitch !== undefined) { pitch = msg.payload.pitch; }
-					if (msg.payload.storeAndReuse !== undefined) { storeAndReuse = msg.payload.storeAndReuse; }
+					if (msg.payload.text 			!== undefined) { textToSynthesize = msg.payload.text; }
+					if (msg.payload.voice 			!== undefined) { voice = msg.payload.voice; }
+					if (msg.payload.expression 		!== undefined) { expression = msg.payload.expression; }
+					if (msg.payload.rate 			!== undefined) { rate = msg.payload.rate; }
+					if (msg.payload.pitch 			!== undefined) { pitch = msg.payload.pitch; }
+					if (msg.payload.storeAndReuse 	!== undefined) { storeAndReuse = msg.payload.storeAndReuse; }
 				}
 
 				var ssml = '';
