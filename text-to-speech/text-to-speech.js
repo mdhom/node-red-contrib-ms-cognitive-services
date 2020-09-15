@@ -16,7 +16,7 @@ module.exports = function(RED) {
 		
 		// pull in the required packages.
 		var sdk = require("microsoft-cognitiveservices-speech-sdk");
-		var fs = require("fs");
+		var fs  = require("fs");
 		var md5 = require("md5");
 		
 		function handleError(error){
@@ -81,8 +81,8 @@ module.exports = function(RED) {
 				}
 				
 				const speechConfig = sdk.SpeechConfig.fromSubscription(configNode.apiKey, configNode.region);
-				const audioConfig = sdk.AudioConfig.fromAudioFileOutput(filepath);
-				const synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
+				const audioConfig  = sdk.AudioConfig.fromAudioFileOutput(filepath);
+				const synthesizer  = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
 							 
 				node.status({fill:"yellow",shape:"dot",text:"Requesting"});
 				
