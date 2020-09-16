@@ -1,0 +1,82 @@
+<!--- SPEECH TO TEXT NODE --->
+<script type="text/javascript">
+    RED.nodes.registerType('ms-cognitive-services-stt',{
+        category: 'Microsoft Cognitive Services',
+        color: '#a6bbcf',
+        defaults: {
+            name:       { value: "" },
+			apiConfig:  { value: "", type: "ms-cognitive-services-config" },
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "speech-to-text-icon.png",
+        label: function() { return this.name || "Speech to text"; },
+		paletteLabel: "Speech to text"
+    });
+    
+</script>
+
+<script type="text/html" data-template-name="ms-cognitive-services-stt">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+	
+    <div class="form-row">
+        <label for="node-input-apiConfig"><i class="fa fa-tag"></i> ApiConfig</label>
+        <input type="text" id="node-input-apiConfig" placeholder="ApiConfig" />
+    </div>
+</script>
+
+<script type="text/html" data-help-name="ms-cognitive-services-stt">
+	
+	<h3>Input message</h3>
+	<dl class="message-properties">
+
+		<dt class="optional">textToSynthesize <span class="property-type">string</span> </dt>
+		<dd> The text which should by synthesized. Can be enhanced with additional infos, 
+			 like adding short breaks within your text <code>&lt;break time="600ms"/&gt;</code>. 
+			 See <a href="https://speech.microsoft.com/audiocontentcreation" target=_blank>here</a> for more.</dd>
+
+		<dt class="optional">voice <span class="property-type">enum</span> </dt>
+		<dd> 	The voice with which the text should be spoken. Select one from 
+				<a href="https://docs.microsoft.com/de-de/azure/cognitive-services/speech-service/language-support#standard-voices" target=_blank>here</a>. 
+		</dd>
+
+		<dt class="optional">expression <span class="property-type">enum</span> </dt>
+		<dd> The expression of the voice. Select one from
+			<ul>
+				<li>General</li>
+				<li>Cheerful</li>
+				<li>CustomerService</li>
+				<li>Empathy</li>
+				<li>Newscast</li>
+				<li>Chat</li>
+			</ul>
+		</dd>
+
+		<dt class="optional">rate <span class="property-type">number</span> </dt>
+		<dd> The speaking rate. Allowed range from -100% up to 200%. </dd>
+
+		<dt class="optional">pitch <span class="property-type">number</span> </dt>
+		<dd> The pitch of the voice. Allowed range from -50% to 50%. </dd>
+
+		<dt class="optional">storeAndReuse <span class="property-type">boolean</span> </dt>
+		<dd> If true, on each request the node checks wether the same request (regarding, text, voice, rate, pitch, ...) has 
+			 already been downloaded and reuses the file if so. </dd>
+	</dl>
+	
+	<h3>Output message</h3>
+	<dl class="message-properties">
+		<dt>payload <span class="property-type">buffer</span> </dt>
+		<dd> The audio file in a buffer, can e.g. be used for writing into file. </dd>
+
+		<dt>tempFilename <span class="property-type">string</span></dt>
+		<dd> The name of the temporary file, where the audio is stored in data folder. </dd>
+	</dl>
+
+	<h3>References</h3>
+	<ul>
+		<li><a href="https://github.com/mdhom/node-red-contrib-ms-cognitive-services" target=_blank>GitHub</a> - the nodes github repository</li>
+	</ul>
+</script>
