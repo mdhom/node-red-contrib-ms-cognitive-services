@@ -35,6 +35,7 @@ module.exports = function(RED) {
 				var rate 				= config.rate;
 				var pitch 				= config.pitch;
 				var storeAndReuse 		= config.storeAndReuse;
+				var fileDirectory	= "/data/ms-cognitive-services-audiofiles/";
 				
 				if (msg.payload !== undefined && msg.payload !== null) 
 				{
@@ -44,6 +45,7 @@ module.exports = function(RED) {
 					if (msg.payload.rate 			!== undefined) { rate = msg.payload.rate; }
 					if (msg.payload.pitch 			!== undefined) { pitch = msg.payload.pitch; }
 					if (msg.payload.storeAndReuse 	!== undefined) { storeAndReuse = msg.payload.storeAndReuse; }
+					if (msg.payload.fileDirectory	!== undefined) { fileDirectory = msg.payload.fileDirectory; }
 				}
 
 				var ssml = '';
@@ -64,7 +66,6 @@ module.exports = function(RED) {
 				}
 							 
 				const filename = md5(ssml) + ".wav";
-				const fileDirectory = "/data/ms-cognitive-services-audiofiles/";
 				const filepath = fileDirectory + filename;
 
 				if (!fs.existsSync(fileDirectory)){

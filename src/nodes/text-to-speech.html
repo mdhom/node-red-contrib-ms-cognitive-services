@@ -250,8 +250,8 @@
 	<h3>Input message</h3>
 	<dl class="message-properties">
 
-		<dt class="optional">textToSynthesize <span class="property-type">string</span> </dt>
-		<dd> The text which should by synthesized. Can be enhanced with additional infos, 
+		<dt class="optional">text <span class="property-type">string</span> </dt>
+		<dd> The text which should be synthesized. Can be enhanced with additional infos, 
 			 like adding short breaks within your text <code>&lt;break time="600ms"/&gt;</code>. 
 			 See <a href="https://speech.microsoft.com/audiocontentcreation" target=_blank>here</a> for more.</dd>
 
@@ -281,6 +281,9 @@
 		<dt class="optional">storeAndReuse <span class="property-type">boolean</span> </dt>
 		<dd> If true, on each request the node checks wether the same request (regarding, text, voice, rate, pitch, ...) has 
 			 already been downloaded and reuses the file if so. </dd>
+
+		<dt class="optional">fileDirectory <span class="property-type">string</span> </dt>
+		<dd> Absolute path to store resultant wav file (including trailing "/").  Default is /data/ms-cognitive-services-audiofiles/ </dd>
 	</dl>
 	
 	<h3>Output message</h3>
